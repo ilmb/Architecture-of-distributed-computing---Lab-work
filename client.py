@@ -15,24 +15,33 @@ def get_num(n):
     (result, ) = struct.unpack("q", resp)
     return result
 
-op = None
-value = 0
-while True:
-    while True:
-        n = input("Enter line number for number: ")
-        try:
-            n = int(n)
-            if n <= 0:
-                raise ValueError()
-            num = get_num(n)
-        except (ValueError, struct.error):
-            print("Incorrect input")
-            continue
-        print("Received", num)
-        if n >= 0: 
-            break
-        else:
-            print("Server returned error. Try again.")
+def read_num():
+    n = input("Enter line number for number: ")
+    try:
+        n = int(n)
+        if n <= 0:
+            raise ValueError()
+        num = get_num(n)
+    except (ValueError, struct.error):
+        print("Incorrect input")
+        return read_num()
+    print("Received", num)
+    if n >= 0: 
+        return n
+    else:
+        print("Server returned error. Try again.")
+        return read_num()
+
+def read_op():
+    o = input("Enter next operation: ")
+    if o in "+-*/^":
+        return o
+    else:
+        print("Incorrect input")
+        return read_op()
+
+def work(value = 0, op = None):
+    num = read_num()
 
     if op == None:
         value = num
@@ -53,12 +62,8 @@ while True:
         value **= num
     print("Current result:", value)
 
-    while True:
-        op = input("Enter next operation: ")
-        if op in "+-*/^":
-            break
-        else:
-            print("Incorrect input")
-            continue
+    op = read_op()
 
-       
+    work(value, op)
+
+work()

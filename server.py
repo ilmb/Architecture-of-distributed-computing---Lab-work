@@ -8,7 +8,7 @@ sock.bind(address)
 sock.listen(1)
 
 
-while True:
+def serve():
     conn, addr = sock.accept()
     recv = conn.recv(8)
     print("Received:", recv, "from", addr)
@@ -16,7 +16,7 @@ while True:
         line, = struct.unpack("q", recv)
     except:
         conn.close()
-        continue
+        return serve()
     err = False
     num = 0
     try:
@@ -29,3 +29,6 @@ while True:
     conn.send(data)
     conn.close()
     print("Sent", data)
+    serve()
+
+serve()
